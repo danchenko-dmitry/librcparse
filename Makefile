@@ -10,7 +10,7 @@ CXXFLAGS ?= -std=c++20 -O2 -Wall -Wextra -Werror
 CPPFLAGS := -Icrsf -Ipacket_catcher -I$(UART_RP_TEST_ROOT)/modules/etl/include
 
 BUILD := build
-TARGET := $(BUILD)/bin/crsf-stream-viewer
+TARGET := bin/crsf-stream-viewer
 
 SRCS := \
 	crsf-stream-viewer/main.cpp \

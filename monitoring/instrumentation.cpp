@@ -1,11 +1,6 @@
 #include "instrumentation.h"
-#include "../crsf/crsf.h"
-#include "../msp/msp.h"
-#include "monitoring/processor.h"
-#include "monitoring/counter.h"
-
-namespace monitoring = ::monitoring;
-namespace metrics = ::monitoring;
+#include "crsf.h"
+#include "msp.h"
 
 namespace packet_catcher_instrumentation {
 

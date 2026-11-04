@@ -16,38 +16,36 @@ if(NOT UART_RP_TEST_ROOT)
         "${CMAKE_CURRENT_SOURCE_DIR}/../uart-rp-test" ABSOLUTE)
 endif()
 
-if(NOT EXISTS "${UART_RP_TEST_ROOT}/cmake/CommonConfig.cmake")
-    message(FATAL_ERROR
-        "UART_RP_TEST_ROOT does not look like uart-rp-test: ${UART_RP_TEST_ROOT}")
-endif()
-
 if(CRSF_IS_TOP_LEVEL)
     set(CMAKE_CXX_STANDARD 20)
     set(CMAKE_CXX_STANDARD_REQUIRED ON)
-    set(BUILD_SHARED_LIBS OFF CACHE BOOL "Use static libraries" FORCE)
-    include(${UART_RP_TEST_ROOT}/cmake/CommonConfig.cmake)
+
+    if(NOT EXISTS "${UART_RP_TEST_ROOT}/modules/etl/CMakeLists.txt")
+        message(FATAL_ERROR
+            "ETL not found. Set UART_RP_TEST_ROOT to a uart-rp-test checkout: ${UART_RP_TEST_ROOT}")
+    endif()
+
+    function(set_common_compile_options target_name)
+        target_compile_options(${target_name} PRIVATE -Wall -Wextra -Werror)
+    endfunction()
 
     function(add_etl_if_needed)
         if(NOT TARGET etl::etl)
             add_subdirectory(${UART_RP_TEST_ROOT}/modules/etl etl)
         endif()
     endfunction()
-
-    function(add_opentelemetry_if_needed)
-        if(NOT TARGET opentelemetry_metrics)
-            add_subdirectory(${UART_RP_TEST_ROOT}/modules/opentelemetry-cpp opentelemetry-cpp)
-            add_custom_target(opentelemetry_proto_ready
-                DEPENDS opentelemetry_proto opentelemetry_proto_grpc
-                COMMENT "OpenTelemetry proto files generated and ready"
-            )
-        endif()
-    endfunction()
-
-    add_etl_if_needed()
-    add_opentelemetry_if_needed()
-    add_subdirectory(${UART_RP_TEST_ROOT}/domain domain)
 endif()
 
 add_subdirectory(packet_catcher)
 add_subdirectory(crsf)
 add_subdirectory(msp)
+
+# OpenTelemetry export is optional and only built when the parent already
+# provides monitoring_domain. The packet catcher itself does not use it.
+if(TARGET monitoring_domain)
+    add_subdirectory(monitoring)
+endif()
+
+if(CRSF_IS_TOP_LEVEL)
+    add_subdirectory(crsf-stream-viewer)
+endif()

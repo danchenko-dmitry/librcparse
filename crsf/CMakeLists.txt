@@ -6,7 +6,17 @@ if(NOT UART_RP_TEST_ROOT)
 endif()
 
 if(NOT COMMAND set_common_compile_options)
-    include(${UART_RP_TEST_ROOT}/cmake/CommonConfig.cmake)
+    function(set_common_compile_options target_name)
+        target_compile_options(${target_name} PRIVATE -Wall -Wextra -Werror)
+    endfunction()
+endif()
+
+if(NOT COMMAND add_etl_if_needed)
+    function(add_etl_if_needed)
+        if(NOT TARGET etl::etl)
+            add_subdirectory(${UART_RP_TEST_ROOT}/modules/etl etl)
+        endif()
+    endfunction()
 endif()
 
 add_etl_if_needed()

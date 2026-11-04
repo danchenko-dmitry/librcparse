@@ -28,4 +28,4 @@ catcher.setProtocolCallbacks(cb);
 catcher.processBytes(bytes, n);
 ```
 
-Optional `PacketCatcherInstrumentation` counts bytes and frames. `PCICout` keeps the counters locally; `PCIMetrics` exports them. `getStatistics` and `resetStatistics` work only with `PCICout`.
+Optional `PacketCatcherInstrumentation` counts bytes and frames. `PCICout` keeps the counters in the process. `getStatistics` and `resetStatistics` work only with `PCICout`. Export through OpenTelemetry lives in the sibling `monitoring` library (`PCIMetrics`) and is not part of the catcher.
